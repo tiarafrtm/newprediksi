@@ -1,0 +1,237 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Edit Properti - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="content-section active" id="edit-property">
+    <div class="content-header">
+        <h2>Edit Properti</h2>
+        <p class="text-muted">Perbarui informasi properti</p>
+    </div>
+
+    <!-- Edit Property Form -->
+    <div class="card" style="background-color: #2d2d2d; border: 1px solid #495057;">
+        <div class="card-header" style="background-color: #343a40; border-bottom: 1px solid #495057;">
+            <h5 class="text-white">Edit Properti: {{ property.alamat[:50] }}...</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('admin.update_property', property_id=property.id) }}" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Luas Tanah (m²)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="luas_tanah" value="{{ property.luas_tanah }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Luas Bangunan (m²)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="luas_bangunan" value="{{ property.luas_bangunan }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kamar Tidur</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="kamar_tidur" value="{{ property.kamar_tidur }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kamar Mandi</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="kamar_mandi" value="{{ property.kamar_mandi }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Carport/Garasi</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="carport" value="{{ property.carport }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Tahun Dibangun</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="tahun_dibangun" value="{{ property.tahun_dibangun }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Jumlah Lantai</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="lantai" value="{{ property.lantai or 1 }}" min="1" placeholder="Contoh: 2">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kota</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="kota" value="{{ property.kota or '' }}" placeholder="Contoh: Jakarta" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Judul Properti</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" name="judul_properti" value="{{ property.judul_properti or '' }}" placeholder="Contoh: Rumah Modern Minimalis" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kelurahan</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="kelurahan" value="{{ property.kelurahan or '' }}" placeholder="Contoh: Kemang" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kecamatan</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="kecamatan" value="{{ property.kecamatan or '' }}" placeholder="Contoh: Mampang Prapatan" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Alamat Lengkap</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" name="alamat" value="{{ property.alamat }}" placeholder="Jalan lengkap dengan nomor" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Deskripsi Properti</label>
+                    <textarea class="form-control bg-dark text-light border-secondary" name="deskripsi" rows="4" placeholder="Deskripsikan properti ini, fasilitas, dan keunggulannya...">{{ property.deskripsi or '' }}</textarea>
+                    <small class="text-muted">Opsional: Tambahkan deskripsi detail tentang properti</small>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Harga (Rp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="harga" id="harga_input_edit" 
+                               value="{% if property.harga %}{{ '{:,.0f}'.format(property.harga).replace(',', '.') }}{% endif %}" 
+                               placeholder="Contoh: 300.000.000">
+                        <input type="hidden" name="harga_raw" id="harga_raw_edit" value="{{ property.harga if property.harga else '' }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Status</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="status">
+                            <option value="available" {% if property.status == 'available' %}selected{% endif %}>Available</option>
+                            <option value="sold" {% if property.status == 'sold' %}selected{% endif %}>Sold</option>
+                            <option value="pending" {% if property.status == 'pending' %}selected{% endif %}>Pending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label text-light">Gambar Properti (Multiple)</label>
+                        {% if property.images %}
+                        <div class="mb-2">
+                            <small class="text-muted">Gambar saat ini:</small>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                {% for image in property.images %}
+                                <div class="position-relative">
+                                    <img src="{{ url_for('static', filename='images/' + image) }}" class="" style="width: 120px; height: 90px; object-fit: cover; border-radius: 5px;" alt="Current Image">
+                                    <small class="d-block text-muted mt-1">{{ image[:20] }}...</small>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% elif property.image %}
+                        <div class="mb-2">
+                            <small class="text-muted">Gambar saat ini (lama):</small>
+                            <img src="{{ url_for('static', filename='images/' + property.image) }}" class="d-block mt-2" style="max-width: 200px; max-height: 150px; object-fit: cover;" alt="Current Image">
+                        </div>
+                        {% endif %}
+                        <input type="file" class="form-control bg-dark text-light border-secondary" name="images" accept="image/*" multiple>
+                        <small class="text-muted">Pilih gambar baru atau tambahan. Biarkan kosong untuk mempertahankan gambar yang ada</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Latitude</label>
+                        <input type="number" step="any" class="form-control bg-dark text-light border-secondary" name="latitude" value="{{ property.latitude if property.latitude else '' }}" placeholder="-6.2088">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Longitude</label>
+                        <input type="number" step="any" class="form-control bg-dark text-light border-secondary" name="longitude" value="{{ property.longitude if property.longitude else '' }}" placeholder="106.8456">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jarak ke Sekolah (meter)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="jarak_sekolah" value="{{ property.jarak_sekolah }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jarak ke Rumah Sakit (meter)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="jarak_rs" value="{{ property.jarak_rs }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jarak ke Pasar (meter)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="jarak_pasar" value="{{ property.jarak_pasar }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jenis Jalan</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="jenis_jalan">
+                            <option value="gang_kecil" {% if property.jenis_jalan == 'gang_kecil' %}selected{% endif %}>Gang Kecil</option>
+                            <option value="jalan_sedang" {% if property.jenis_jalan == 'jalan_sedang' %}selected{% endif %}>Jalan Sedang</option>
+                            <option value="jalan_besar" {% if property.jenis_jalan == 'jalan_besar' %}selected{% endif %}>Jalan Besar</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Kondisi</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="kondisi">
+                            <option value="baru" {% if property.kondisi == 'baru' %}selected{% endif %}>Baru</option>
+                            <option value="baik" {% if property.kondisi == 'baik' %}selected{% endif %}>Baik</option>
+                            <option value="renovasi_ringan" {% if property.kondisi == 'renovasi_ringan' %}selected{% endif %}>Renovasi Ringan</option>
+                            <option value="butuh_renovasi" {% if property.kondisi == 'butuh_renovasi' %}selected{% endif %}>Butuh Renovasi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Sertifikat</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="sertifikat">
+                            <option value="SHM" {% if property.sertifikat == 'SHM' %}selected{% endif %}>SHM</option>
+                            <option value="HGB" {% if property.sertifikat == 'HGB' %}selected{% endif %}>HGB</option>
+                            <option value="lainnya" {% if property.sertifikat == 'lainnya' %}selected{% endif %}>Lainnya</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Nama Penjual</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="nama_penjual" value="{{ property.nama_penjual or '' }}" placeholder="Contoh: John Doe">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Nomor Penjual (WhatsApp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="nomor_penjual" value="{{ property.nomor_penjual or '' }}" placeholder="Contoh: 08123456789">
+                        <small class="text-muted">Format: 08xxxxxxxx (tanpa +62)</small>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="fas fa-save"></i> Update Properti
+                        </button>
+                        <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Detail
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Format harga otomatis untuk edit form
+function formatNumber(input, hiddenInput) {
+    // Ambil nilai dan hapus semua karakter non-digit
+    let value = input.value.replace(/\D/g, '');
+    
+    // Format dengan titik sebagai pemisah ribuan
+    let formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    // Update input yang terlihat
+    input.value = formatted;
+    
+    // Update hidden input dengan nilai asli (tanpa format)
+    hiddenInput.value = value;
+}
+
+// Event listener untuk input harga edit
+document.addEventListener('DOMContentLoaded', function() {
+    const hargaInput = document.getElementById('harga_input_edit');
+    const hargaRaw = document.getElementById('harga_raw_edit');
+    
+    if (hargaInput && hargaRaw) {
+        hargaInput.addEventListener('input', function() {
+            formatNumber(this, hargaRaw);
+        });
+        
+        // Submit form dengan nilai mentah
+        const form = hargaInput.closest('form');
+        form.addEventListener('submit', function(e) {
+            // Ganti nama field harga dengan nilai mentah
+            hargaInput.name = '';
+            hargaRaw.name = 'harga';
+        });
+    }
+});
+</script>
+{% endblock %}

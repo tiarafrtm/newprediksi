@@ -1,0 +1,339 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Properti - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="content-section active" id="properties">
+    <div class="content-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Manajemen Properti</h2>
+            <p class="text-muted mb-0">Tambah dan kelola properti</p>
+        </div>
+        <button class="btn px-4 py-2" onclick="toggleAddPropertyForm()" style="background-color: #6c757d; border-color: #6c757d; color: white;">
+            + Tambah Properti Baru
+        </button>
+    </div>
+
+    <!-- Add Property Form (Hidden by default) -->
+    <div class="card mb-4" id="addPropertyForm" style="background-color: #3a3f47; border: 1px solid #555a61; display: none;">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #495057; border-bottom: 1px solid #6c757d;">
+            <h5 class="text-white mb-0">Tambah Properti Baru</h5>
+            <button class="btn btn-sm btn-outline-light" onclick="toggleAddPropertyForm()">
+                ×
+            </button>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('admin.add_property') }}" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Luas Tanah (m²)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="luas_tanah" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Luas Bangunan (m²)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="luas_bangunan" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kamar Tidur</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="kamar_tidur" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kamar Mandi</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="kamar_mandi" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Carport/Garasi</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="carport" value="0">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Tahun Dibangun</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="tahun_dibangun" value="2020">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Jumlah Lantai</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="lantai" value="1" min="1" placeholder="Contoh: 2">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kota</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="kota" placeholder="Contoh: Jakarta" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Judul Properti</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" name="judul_properti" placeholder="Contoh: Rumah Modern Minimalis" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kelurahan</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="kelurahan" placeholder="Contoh: Kemang" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Kecamatan</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="kecamatan" placeholder="Contoh: Mampang Prapatan" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Alamat Lengkap</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" name="alamat" placeholder="Jalan lengkap dengan nomor" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-light">Deskripsi Properti</label>
+                    <textarea class="form-control bg-dark text-light border-secondary" name="deskripsi" rows="4" placeholder="Deskripsikan properti ini, fasilitas, dan keunggulannya..."></textarea>
+                    <small class="text-muted">Opsional: Tambahkan deskripsi detail tentang properti</small>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Harga (Rp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="harga" id="harga_input" placeholder="Contoh: 300.000.000">
+                        <input type="hidden" name="harga_raw" id="harga_raw">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Gambar Properti (Multiple)</label>
+                        <input type="file" class="form-control bg-dark text-light border-secondary" name="images" accept="image/*" multiple>
+                        <small class="text-muted">Anda bisa memilih beberapa gambar sekaligus</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Latitude</label>
+                        <input type="number" step="any" class="form-control bg-dark text-light border-secondary" name="latitude" placeholder="-6.2088">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Longitude</label>
+                        <input type="number" step="any" class="form-control bg-dark text-light border-secondary" name="longitude" placeholder="106.8456">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jarak ke Sekolah (meter)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="jarak_sekolah" value="1000">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jarak ke Rumah Sakit (meter)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="jarak_rs" value="2000">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jarak ke Pasar (meter)</label>
+                        <input type="number" class="form-control bg-dark text-light border-secondary" name="jarak_pasar" value="1500">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Jenis Jalan</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="jenis_jalan">
+                            <option value="gang_kecil">Gang Kecil</option>
+                            <option value="jalan_sedang">Jalan Sedang</option>
+                            <option value="jalan_besar">Jalan Besar</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Kondisi</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="kondisi">
+                            <option value="baru">Baru</option>
+                            <option value="baik">Baik</option>
+                            <option value="renovasi_ringan">Renovasi Ringan</option>
+                            <option value="butuh_renovasi">Butuh Renovasi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-light">Sertifikat</label>
+                        <select class="form-select bg-dark text-light border-secondary" name="sertifikat">
+                            <option value="SHM">SHM</option>
+                            <option value="HGB">HGB</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Nama Penjual</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="nama_penjual" placeholder="Contoh: John Doe">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Nomor Penjual (WhatsApp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" name="nomor_penjual" placeholder="Contoh: 08123456789">
+                        <small class="text-muted">Format: 08xxxxxxxx (tanpa +62)</small>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Tambah Properti</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Properties List -->
+    <div class="card" style="background-color: #3a3f47; border: 1px solid #555a61;">
+        <div class="card-header" style="background-color: #495057; border-bottom: 1px solid #6c757d;">
+            <h5 class="text-white mb-0">
+                Daftar Properti 
+                <span class="badge bg-primary ms-2">{{ properties|length }}</span>
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            {% if properties %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0" style="border-collapse: separate; border-spacing: 0;">
+                    <thead style="background-color: #495057;">
+                        <tr>
+                            <th class="px-4 py-3 border-0" style="width: 80px;">Gambar</th>
+                            <th class="px-4 py-3 border-0" style="width: 35%;">Properti</th>
+                            <th class="px-4 py-3 border-0" style="width: 15%;">Luas</th>
+                            <th class="px-4 py-3 border-0" style="width: 12%;">Kamar</th>
+                            <th class="px-4 py-3 border-0" style="width: 15%;">Harga</th>
+                            <th class="px-4 py-3 border-0" style="width: 10%;">Status</th>
+                            <th class="px-4 py-3 border-0 text-center" style="width: 13%;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for property in properties %}
+                        <tr style="border-bottom: 1px solid #404040;">
+                            <td class="px-4 py-4 border-0">
+                                {% if property.image %}
+                                <img src="{{ url_for('static', filename='images/' + property.image) }}" 
+                                     alt="Property Image" 
+                                     class="rounded" 
+                                     style="width: 50px; height: 40px; object-fit: cover; border: 1px solid #555;">
+                                {% else %}
+                                <div class="bg-secondary rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 50px; height: 40px; border: 1px solid #555;">
+                                    <i class="fas fa-image text-muted" style="font-size: 14px;"></i>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-4 border-0">
+                                <div>
+                                    <h6 class="mb-1 text-white fw-bold">{{ property.judul_properti or 'Rumah Subsidi' }}</h6>
+                                    <div class="small" style="color: #adb5bd;">
+                                        {{ property.alamat[:50] }}{% if property.alamat|length > 50 %}...{% endif %}
+                                    </div>
+                                    {% if property.kelurahan %}
+                                    <div class="small mt-1" style="color: #90a3b3;">{{ property.kelurahan }}</div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 border-0">
+                                <div class="small">
+                                    <div class="mb-1" style="color: #d4a574;">
+                                        <strong>{{ property.luas_tanah }}m²</strong>
+                                        <span class="text-muted">tanah</span>
+                                    </div>
+                                    <div style="color: #8db3c7;">
+                                        <strong>{{ property.luas_bangunan }}m²</strong>
+                                        <span class="text-muted">bangunan</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 border-0">
+                                <div class="small">
+                                    <div class="mb-1">
+                                        <span class="badge" style="font-size: 10px; background-color: #6c757d; color: white;">{{ property.kamar_tidur }} KT</span>
+                                    </div>
+                                    <div>
+                                        <span class="badge" style="font-size: 10px; background-color: #718096; color: white;">{{ property.kamar_mandi }} KM</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 border-0">
+                                {% if property.harga %}
+                                <div class="text-white small">
+                                    <strong>Rp {{ "{:,.0f}".format(property.harga) }}</strong>
+                                </div>
+                                {% else %}
+                                <span class="text-muted small">Tidak tersedia</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-4 border-0">
+                                <span class="badge bg-success small">
+                                    {{ property.status|default('Available') }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 border-0 text-center">
+                                <div class="d-flex justify-content-center gap-1">
+                                    <a href="{{ url_for('main.property_detail', property_id=property.id) }}" 
+                                       class="btn btn-primary btn-sm action-btn view" 
+                                       style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                       title="Lihat Detail">
+                                        <i class="fas fa-eye" style="font-size: 12px;"></i>
+                                    </a>
+                                    <a href="{{ url_for('admin.edit_property', property_id=property.id) }}" 
+                                       class="btn btn-warning btn-sm action-btn edit" 
+                                       style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                       title="Edit">
+                                        <i class="fas fa-edit" style="font-size: 12px;"></i>
+                                    </a>
+                                    <a href="{{ url_for('admin.delete_property', property_id=property.id) }}" 
+                                       class="btn btn-danger btn-sm action-btn delete" 
+                                       style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                                       onclick="return confirm('Yakin hapus properti ini?')"
+                                       title="Hapus">
+                                        <i class="fas fa-trash" style="font-size: 12px;"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="text-muted mb-3" style="font-size: 48px;">📋</div>
+                <h5 class="text-muted">Belum ada properti yang ditambahkan</h5>
+                <p class="text-muted">Klik tombol "Tambah Properti Baru" untuk memulai</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+    function toggleAddPropertyForm() {
+        const form = document.getElementById('addPropertyForm');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+            form.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            form.style.display = 'none';
+        }
+    }
+
+    // Format harga otomatis
+    function formatNumber(input) {
+        // Ambil nilai dan hapus semua karakter non-digit
+        let value = input.value.replace(/\D/g, '');
+        
+        // Format dengan titik sebagai pemisah ribuan
+        let formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        
+        // Update input yang terlihat
+        input.value = formatted;
+        
+        // Update hidden input dengan nilai asli (tanpa format)
+        document.getElementById('harga_raw').value = value;
+    }
+
+    // Event listener untuk input harga
+    document.addEventListener('DOMContentLoaded', function() {
+        const hargaInput = document.getElementById('harga_input');
+        if (hargaInput) {
+            hargaInput.addEventListener('input', function() {
+                formatNumber(this);
+            });
+            
+            // Submit form dengan nilai mentah
+            const form = hargaInput.closest('form');
+            form.addEventListener('submit', function(e) {
+                // Ganti nama field harga dengan nilai mentah
+                const rawValue = document.getElementById('harga_raw').value;
+                hargaInput.name = '';
+                document.getElementById('harga_raw').name = 'harga';
+            });
+        }
+    });
+    </script>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <i class="fas fa-home me-2"></i>
+            <span class="sidebar-title">PropertyAI</span>
+        </div>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-menu">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'admin.admin_panel' %}active{% endif %}" href="{{ url_for('admin.admin_panel') }}">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'admin.properties' %}active{% endif %}" href="{{ url_for('admin.properties') }}">
+                    <i class="fas fa-building"></i>
+                    <span class="nav-text">Properti</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.endpoint == 'admin.predictions' %}active{% endif %}" href="{{ url_for('admin.predictions') }}">
+                    <i class="fas fa-calculator"></i>
+                    <span class="nav-text">Prediksi Harga</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#settings" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </li>
+            <li class="nav-item mt-3 border-top pt-3">
+                <a class="nav-link text-success" href="{{ url_for('main.index') }}" target="_blank">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span class="nav-text">Kembali ke Situs Utama</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

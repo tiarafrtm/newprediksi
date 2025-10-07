@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Daftar Properti</h2>
+    
+    <!-- Search and Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" id="filterForm">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Budget Minimum</label>
+                        <input type="text" class="form-control budget-input" id="budget_min_display" placeholder="500.000.000">
+                        <input type="hidden" name="budget_min" id="budget_min" value="{{ request.args.get('budget_min', '') }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Budget Maximum</label>
+                        <input type="text" class="form-control budget-input" id="budget_max_display" placeholder="1.000.000.000">
+                        <input type="hidden" name="budget_max" id="budget_max" value="{{ request.args.get('budget_max', '') }}">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Kecamatan</label>
+                        <select class="form-select" name="kecamatan">
+                            <option value="">Semua</option>
+                            <option value="Prabumulih Barat" {% if request.args.get('kecamatan') == 'Prabumulih Barat' %}selected{% endif %}>Prabumulih Barat</option>
+                            <option value="Prabumulih Timur" {% if request.args.get('kecamatan') == 'Prabumulih Timur' %}selected{% endif %}>Prabumulih Timur</option>
+                            <option value="Prabumulih Selatan" {% if request.args.get('kecamatan') == 'Prabumulih Selatan' %}selected{% endif %}>Prabumulih Selatan</option>
+                            <option value="Prabumulih Utara" {% if request.args.get('kecamatan') == 'Prabumulih Utara' %}selected{% endif %}>Prabumulih Utara</option>
+                            <option value="Cambai" {% if request.args.get('kecamatan') == 'Cambai' %}selected{% endif %}>Cambai</option>
+                            <option value="Rambang Kapak Tengah" {% if request.args.get('kecamatan') == 'Rambang Kapak Tengah' %}selected{% endif %}>Rambang Kapak Tengah</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Cari
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+    // Auto-format budget inputs with thousand separators
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    
+    function unformatNumber(str) {
+        return str.replace(/[^\d]/g, '');
+    }
+    
+    // Handle budget input formatting
+    document.querySelectorAll('.budget-input').forEach(input => {
+        // Set initial value from hidden input
+        const hiddenId = input.id.replace('_display', '');
+        const hiddenInput = document.getElementById(hiddenId);
+        if (hiddenInput.value) {
+            input.value = formatNumber(hiddenInput.value);
+        }
+        
+        input.addEventListener('input', function(e) {
+            let value = unformatNumber(e.target.value);
+            if (value && !isNaN(value)) {
+                e.target.value = formatNumber(value);
+                hiddenInput.value = value;
+            } else if (!value) {
+                hiddenInput.value = '';
+            }
+        });
+        
+        input.addEventListener('blur', function(e) {
+            let value = unformatNumber(e.target.value);
+            if (value && !isNaN(value)) {
+                e.target.value = formatNumber(value);
+            }
+        });
+    });
+    </script>
+    
+    <div class="row">
+        {% for property in properties %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card property-card h-100">
+                {% if property.image %}
+                <img src="{{ url_for('static', filename='images/' + property.image) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="Property">
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-home fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ property.judul_properti or property.alamat or 'Judul tidak tersedia' }}</h5>
+                    <p class="card-text text-muted mb-2">
+                        <i class="fas fa-map-marker-alt"></i> {{ property.kelurahan or 'Lokasi' }}{% if property.kecamatan %}, {{ property.kecamatan }}{% endif %}{% if property.kota %}, {{ property.kota }}{% endif %} • {{ (property.alamat[:30] + '...' if property.alamat|length > 30 else property.alamat) if property.alamat else '' }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-bed"></i> {{ property.kamar_tidur }} kamar &nbsp;
+                        <i class="fas fa-bath"></i> {{ property.kamar_mandi }} kamar mandi<br>
+                        <i class="fas fa-ruler-combined"></i> {{ property.luas_tanah }}m² / {{ property.luas_bangunan }}m²
+                    </p>
+                    {% if property.harga %}
+                    <h5 class="text-primary">Rp {{ "{:,.0f}".format(property.harga) }}</h5>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('main.property_detail', property_id=property.id) }}" class="btn btn-primary w-100">Lihat Detail</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if not properties %}
+    <div class="text-center py-5">
+        <i class="fas fa-home fa-5x text-muted mb-3"></i>
+        <h4>Belum ada properti</h4>
+        <p>Silakan tambah data rumah melalui admin panel</p>
+        <a href="{{ url_for('admin.admin_panel') }}" class="btn btn-primary">Admin Panel</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

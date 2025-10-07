@@ -1,0 +1,21 @@
+
+<div class="content-section" id="settings">
+    <div class="content-header">
+        <h2>Pengaturan Sistem</h2>
+        <p class="text-muted">Konfigurasi aplikasi</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5>Model Machine Learning</h5>
+            <p>Status model: <span class="badge bg-success">Active</span></p>
+            <p>Total data training: {{ properties|length }} properti</p>
+            
+            <div class="mt-4">
+                <h5>Backup Data</h5>
+                <button class="btn btn-info">Download Backup</button>
+                <button class="btn btn-warning">Retrain Model</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Property Title Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}" class="text-decoration-none">Beranda</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.properties') }}" class="text-decoration-none">Properti</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail zz</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Property Images Gallery -->
+            <div class="card mb-4">
+                {% set images = property.images if property.images else ([property.image] if property.image else []) %}
+                {% if images %}
+                <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner" style="border-radius: 8px;">
+                        {% for image in images %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ url_for('static', filename='images/' + image) }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Property Image {{ loop.index }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if images|length > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    <div class="carousel-indicators">
+                        {% for image in images %}
+                        <button type="button" data-bs-target="#propertyCarousel" data-bs-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %} aria-current="true" aria-label="Slide {{ loop.index }}"></button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px; border-radius: 8px;">
+                    <i class="fas fa-home fa-5x text-muted"></i>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Property Header Info -->
+            <div class="card mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-2">{{ property.judul_properti or property.alamat }}</h2>
+                            <div class="d-flex align-items-center text-muted mb-2">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                <span><strong>{{ property.kelurahan or 'Kelurahan tidak tersedia' }}</strong>{% if property.kecamatan %}, {{ property.kecamatan }}{% endif %}{% if property.kota %}, {{ property.kota }}{% endif %}</span>
+                            </div>
+                            <p class="text-muted mb-0">{{ property.alamat }}</p>
+                        </div>
+                        <div class="col-md-4 text-md-end text-start mt-3 mt-md-0">
+                            {% if property.harga %}
+                            <h3 class="text-primary mb-1">Rp {{ "{:,.0f}".format(property.harga) }}</h3>
+                            <small class="text-muted">Harga Properti</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Description -->
+            {% if property.deskripsi %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-align-left me-2"></i>Deskripsi Properti</h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-0" style="line-height: 1.6; text-align: justify; white-space: pre-line;">{{ property.deskripsi }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Property Details -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Detail Properti</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-4 mb-md-0">
+                            <h6 class="text-muted mb-3">Spesifikasi Bangunan</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-bed text-primary me-3"></i> {{ property.kamar_tidur }} Kamar Tidur</li>
+                                <li class="mb-2"><i class="fas fa-bath text-info me-3"></i> {{ property.kamar_mandi }} Kamar Mandi</li>
+                                <li class="mb-2"><i class="fas fa-ruler-combined text-success me-3"></i> {{ property.luas_tanah }}m² Luas Tanah</li>
+                                <li class="mb-2"><i class="fas fa-home text-warning me-3"></i> {{ property.luas_bangunan }}m² Luas Bangunan</li>
+                                <li class="mb-2"><i class="fas fa-calendar text-secondary me-3"></i> Tahun {{ property.tahun_dibangun }}</li>
+                                <li class="mb-2"><i class="fas fa-building text-purple me-3"></i> {{ property.lantai or 1 }} Lantai</li>
+                                {% if property.carport %}
+                                <li class="mb-2"><i class="fas fa-car text-dark me-3"></i> {{ property.carport }} Carport</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Informasi Lokasi</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-road text-primary me-3"></i> {{ property.jenis_jalan|replace('_', ' ')|title }}</li>
+                                <li class="mb-2"><i class="fas fa-tools text-info me-3"></i> {{ property.kondisi|replace('_', ' ')|title }}</li>
+                                <li class="mb-2"><i class="fas fa-certificate text-success me-3"></i> {{ property.sertifikat }}</li>
+                                <li class="mb-2">
+                                    <i class="fas fa-info-circle text-warning me-3"></i> 
+                                    <strong>Status:</strong> 
+                                    <span class="badge bg-success ms-1">{{ property.status|replace('_', ' ')|title }}</span>
+                                </li>
+                                {% if property.created_at %}
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-muted me-3"></i> 
+                                    <strong>Ditambahkan:</strong> {{ property.created_at[:10] }}
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facilities Distance -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-map-signs me-2"></i>Jarak ke Fasilitas</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="text-center p-4 bg-light rounded-3 h-100">
+                                <i class="fas fa-school text-primary fa-3x mb-3"></i>
+                                <h6 class="mb-2">Sekolah</h6>
+                                <p class="mb-0 fw-bold text-primary">{{ "%.0f"|format(property.jarak_sekolah) }} meter</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-4 bg-light rounded-3 h-100">
+                                <i class="fas fa-hospital text-success fa-3x mb-3"></i>
+                                <h6 class="mb-2">Rumah Sakit</h6>
+                                <p class="mb-0 fw-bold text-success">{{ "%.0f"|format(property.jarak_rs) }} meter</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-4 bg-light rounded-3 h-100">
+                                <i class="fas fa-shopping-cart text-warning fa-3x mb-3"></i>
+                                <h6 class="mb-2">Pasar</h6>
+                                <p class="mb-0 fw-bold text-warning">{{ "%.0f"|format(property.jarak_pasar) }} meter</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Google Maps -->
+            {% if property.latitude and property.longitude %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Lokasi Properti</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 350px; border-radius: 0 0 8px 8px;"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Contact Action -->
+            <div class="card mb-4">
+                <div class="card-body p-4">
+                    <h6 class="mb-3 text-center">Tertarik dengan properti ini?</h6>
+                    
+                    <!-- Seller Info -->
+                    {% if property.nama_penjual or property.nomor_penjual %}
+                    <div class="seller-info mb-4 p-3 rounded" style="background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                        <h6 class="text-dark mb-2"><i class="fas fa-user text-primary me-2"></i>Informasi Penjual</h6>
+                        {% if property.nama_penjual %}
+                        <p class="mb-1 text-dark"><strong>Nama:</strong> {{ property.nama_penjual }}</p>
+                        {% endif %}
+                        {% if property.nomor_penjual %}
+                        <p class="mb-0 text-dark"><strong>Kontak:</strong> {{ property.nomor_penjual }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        {% if property.nomor_penjual %}
+                        {% set clean_phone = property.nomor_penjual.replace(' ', '').replace('-', '').replace('(', '').replace(')', '') %}
+                        {% if clean_phone.startswith('0') %}
+                        {% set normalized_phone = '62' + clean_phone[1:] %}
+                        {% elif clean_phone.startswith('+62') %}
+                        {% set normalized_phone = clean_phone[1:] %}
+                        {% elif clean_phone.startswith('62') %}
+                        {% set normalized_phone = clean_phone %}
+                        {% else %}
+                        {% set normalized_phone = '62' + clean_phone %}
+                        {% endif %}
+                        {% set seller_name = property.nama_penjual or 'Penjual' %}
+                        {% set property_name = property.judul_properti or property.alamat %}
+                        <a href="https://wa.me/{{ normalized_phone }}?text=Halo%20{{ seller_name }},%20saya%20tertarik%20dengan%20properti%20{{ property_name }}%20yang%20sedang%20dijual.%20Bisa%20kita%20diskusi%20lebih%20lanjut?" 
+                           target="_blank" class="btn btn-success btn-lg">
+                            <i class="fab fa-whatsapp me-2"></i>Hubungi via WhatsApp
+                        </a>
+                        {% else %}
+                        <button class="btn btn-secondary btn-lg" disabled>
+                            <i class="fas fa-phone me-2"></i>Kontak Belum Tersedia
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Properties -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-home me-2"></i>Properti Serupa</h5>
+                </div>
+                <div class="card-body">
+                    {% for similar in similar_properties %}
+                    <a href="{{ url_for('main.property_detail', property_id=similar.id) }}" class="text-decoration-none">
+                        <div class="card mb-3 border-0 shadow-sm" style="transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    {% if similar.image %}
+                                    <img src="{{ url_for('static', filename='images/' + similar.image) }}" 
+                                         class="img-fluid rounded-start h-100" style="object-fit: cover; min-height: 80px;" 
+                                         alt="Property Image">
+                                    {% else %}
+                                    <div class="bg-light rounded-start d-flex align-items-center justify-content-center h-100" 
+                                         style="min-height: 80px;">
+                                        <i class="fas fa-home text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title mb-1 text-truncate">{{ similar.judul_properti or similar.alamat[:40] + '...' }}</h6>
+                                        <p class="text-muted mb-1 small">{{ similar.kelurahan or 'Lokasi' }}{% if similar.kecamatan %}, {{ similar.kecamatan }}{% endif %}{% if similar.kota %}, {{ similar.kota }}{% endif %}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">{{ similar.kamar_tidur }}KT • {{ similar.luas_tanah }}m²</small>
+                                        </div>
+                                        {% if similar.harga %}
+                                        <div class="mt-1">
+                                            <small class="text-primary fw-bold">Rp {{ "{:,.0f}".format(similar.harga) }}</small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if property.latitude and property.longitude %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize map with property coordinates
+    const map = L.map('map').setView([{{ property.latitude }}, {{ property.longitude }}], 15);
+    
+    // Add OpenStreetMap tiles (completely free!)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Add marker for property location
+    const marker = L.marker([{{ property.latitude }}, {{ property.longitude }}]).addTo(map);
+    
+    // Add popup with property information
+    marker.bindPopup(`
+        <div style="color: #333;">
+            <h6 style="margin-bottom: 5px;">{{ property.alamat }}</h6>
+            <p style="margin: 2px 0;">{{ property.kamar_tidur }} kamar • {{ property.luas_tanah }}m²</p>
+            {% if property.harga %}
+            <p style="margin: 2px 0; color: #007bff; font-weight: bold;">Rp {{ "{:,.0f}".format(property.harga) }}</p>
+            {% endif %}
+        </div>
+    `).openPopup();
+});
+</script>
+{% endif %}
+{% endblock %}

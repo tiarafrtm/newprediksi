@@ -1,0 +1,97 @@
+
+<div class="content-section" id="baseprice">
+    <div class="content-header">
+        <h2>Pengaturan Harga Dasar</h2>
+        <p class="text-muted">Atur harga patokan untuk prediksi yang lebih akurat</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Konfigurasi Harga Dasar</h5>
+        </div>
+        <div class="card-body">
+            <form id="basePriceForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Harga per m² Tanah (Rp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="base_price_per_sqm_land" placeholder="500.000">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Harga per m² Bangunan (Rp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="base_price_per_sqm_building" placeholder="2.000.000">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Bonus per Kamar Tidur (Rp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="room_multiplier" placeholder="50.000.000">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-light">Bonus per Kamar Mandi (Rp)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="bathroom_multiplier" placeholder="25.000.000">
+                    </div>
+                </div>
+
+                <h6 class="text-light mt-4 mb-3">Pengali Kondisi Bangunan</h6>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label text-light">Baru</label>
+                        <input type="number" step="0.1" class="form-control bg-dark text-light border-secondary" 
+                               id="condition_baru" placeholder="1.3">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label text-light">Baik</label>
+                        <input type="number" step="0.1" class="form-control bg-dark text-light border-secondary" 
+                               id="condition_baik" placeholder="1.0">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label text-light">Renovasi Ringan</label>
+                        <input type="number" step="0.1" class="form-control bg-dark text-light border-secondary" 
+                               id="condition_renovasi_ringan" placeholder="0.8">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label text-light">Butuh Renovasi</label>
+                        <input type="number" step="0.1" class="form-control bg-dark text-light border-secondary" 
+                               id="condition_butuh_renovasi" placeholder="0.6">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Simpan Pengaturan
+                </button>
+                <button type="button" class="btn btn-warning" id="loadCurrentSettings">
+                    <i class="fas fa-refresh"></i> Muat Setting Saat Ini
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Test Perhitungan Harga Dasar</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-light">Input Test:</h6>
+                    <ul class="text-light small">
+                        <li>Luas Tanah: 100 m²</li>
+                        <li>Luas Bangunan: 80 m²</li>
+                        <li>Kamar Tidur: 3</li>
+                        <li>Kamar Mandi: 2</li>
+                        <li>Kondisi: Baik</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-light">Estimasi Harga:</h6>
+                    <h4 class="text-success" id="testCalculation">-</h4>
+                    <button type="button" class="btn btn-primary btn-sm" id="calculateTest">Hitung Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

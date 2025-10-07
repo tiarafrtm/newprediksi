@@ -1,0 +1,365 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+
+    // Navigation functionality
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+
+            // If it's an internal anchor link, handle it with JavaScript
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+
+                // Remove active class from all links
+                navLinks.forEach(l => l.classList.remove('active'));
+
+                // Add active class to clicked link
+                this.classList.add('active');
+
+                // Handle content switching (if we have multiple sections on same page)
+                const contentSections = document.querySelectorAll('.content-section');
+                contentSections.forEach(section => section.classList.remove('active'));
+
+                const targetId = href.substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+            }
+            // Otherwise, let the link navigate normally
+        });
+    });
+
+    // Set active link based on current page
+    const currentPath = window.location.pathname;
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href');
+        if (linkPath && currentPath.includes(linkPath)) {
+            link.classList.add('active');
+        }
+    });
+});
+</script>
+
+<style>
+/* Base Dark Theme */
+body {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-right: 1px solid #333 !important;
+}
+
+.sidebar .nav-link {
+    color: #b0b0b0 !important;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: #333 !important;
+    color: #ffffff !important;
+}
+
+.sidebar .nav-link.active {
+    border-left: 3px solid #03DAC6 !important;
+}
+
+.sidebar .sidebar-brand {
+    color: #03DAC6 !important;
+}
+
+/* Main Content */
+.main-content {
+    background-color: #121212 !important;
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+    color: #e0e0e0 !important;
+}
+
+/* Cards and Forms */
+.card {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.card-header {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border-bottom: 1px solid #333 !important;
+}
+
+.form-control,
+.form-select {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #444 !important;
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+    color: #888 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #333 !important;
+    border-color: #03DAC6 !important;
+    box-shadow: 0 0 0 0.25rem rgba(3, 218, 198, 0.25) !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #03DAC6 !important;
+    border-color: #03DAC6 !important;
+    color: #121212 !important;
+}
+
+.btn-primary:hover {
+    background-color: #02bca0 !important;
+    border-color: #02bca0 !important;
+}
+
+.btn-secondary {
+    background-color: #6200ee !important;
+    border-color: #6200ee !important;
+    color: #ffffff !important;
+}
+
+.btn-secondary:hover {
+    background-color: #5500cc !important;
+    border-color: #5500cc !important;
+}
+
+/* Specific overrides for Bootstrap elements if needed */
+.bg-light {
+    background-color: #2a2a2a !important;
+}
+
+.text-dark {
+    color: #e0e0e0 !important;
+}
+
+.list-group-item {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #333 !important;
+}
+
+.table {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+}
+
+.table th, .table td {
+    border-color: #333 !important;
+}
+
+.table thead th {
+    background-color: #2a2a2a !important;
+}
+
+/* Ensure content sections are hidden by default */
+.content-section {
+    display: none;
+}
+.content-section.active {
+    display: block;
+}
+</style>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('expanded');
+}
+
+function showSection(sectionId) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.content-section');
+    sections.forEach(section => section.classList.remove('active'));
+
+    // Show selected section
+    document.getElementById(sectionId).classList.add('active');
+
+    // Update nav links
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+    navLinks.forEach(link => link.classList.remove('active'));
+
+    // Add active class to clicked link
+    event.target.closest('.nav-link').classList.add('active');
+}
+
+// Test prediction form
+const testPredictForm = document.getElementById('testPredictForm');
+if (testPredictForm) {
+    testPredictForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+        luas_tanah: document.getElementById('test_luas_tanah').value,
+        luas_bangunan: document.getElementById('test_luas_bangunan').value,
+        kamar_tidur: document.getElementById('test_kamar_tidur').value,
+        kamar_mandi: document.getElementById('test_kamar_mandi').value,
+        carport: 1,
+        tahun_dibangun: 2020,
+        jarak_sekolah: 1000,
+        jarak_rs: 2000,
+        jarak_pasar: 1500,
+        jenis_jalan: 'jalan_sedang',
+        kondisi: 'baik',
+        sertifikat: 'SHM'
+    };
+
+    fetch('/api/predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.prediction) {
+            document.getElementById('testPredictPrice').textContent = data.formatted;
+            document.getElementById('testPredictResult').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    });
+}
+
+// Base Price Management
+const loadCurrentSettings = document.getElementById('loadCurrentSettings');
+if (loadCurrentSettings) {
+    loadCurrentSettings.addEventListener('click', function() {
+    fetch('/admin/get_base_prices')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const prices = data.data;
+            document.getElementById('base_price_per_sqm_land').value = prices.base_price_per_sqm_land.toLocaleString();
+            document.getElementById('base_price_per_sqm_building').value = prices.base_price_per_sqm_building.toLocaleString();
+            document.getElementById('room_multiplier').value = prices.room_multiplier.toLocaleString();
+            document.getElementById('bathroom_multiplier').value = prices.bathroom_multiplier.toLocaleString();
+            
+            document.getElementById('condition_baru').value = prices.condition_multipliers.baru;
+            document.getElementById('condition_baik').value = prices.condition_multipliers.baik;
+            document.getElementById('condition_renovasi_ringan').value = prices.condition_multipliers.renovasi_ringan;
+            document.getElementById('condition_butuh_renovasi').value = prices.condition_multipliers.butuh_renovasi;
+        }
+    });
+    });
+}
+
+const basePriceForm = document.getElementById('basePriceForm');
+if (basePriceForm) {
+    basePriceForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        base_price_per_sqm_land: parseFloat(document.getElementById('base_price_per_sqm_land').value.replace(/\./g, '')),
+        base_price_per_sqm_building: parseFloat(document.getElementById('base_price_per_sqm_building').value.replace(/\./g, '')),
+        room_multiplier: parseFloat(document.getElementById('room_multiplier').value.replace(/\./g, '')),
+        bathroom_multiplier: parseFloat(document.getElementById('bathroom_multiplier').value.replace(/\./g, '')),
+        condition_baru: parseFloat(document.getElementById('condition_baru').value),
+        condition_baik: parseFloat(document.getElementById('condition_baik').value),
+        condition_renovasi_ringan: parseFloat(document.getElementById('condition_renovasi_ringan').value),
+        condition_butuh_renovasi: parseFloat(document.getElementById('condition_butuh_renovasi').value)
+    };
+    
+    fetch('/admin/update_base_prices', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Pengaturan harga dasar berhasil disimpan!');
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat menyimpan pengaturan.');
+    });
+    });
+}
+
+const calculateTest = document.getElementById('calculateTest');
+if (calculateTest) {
+    calculateTest.addEventListener('click', function() {
+    const testData = {
+        luas_tanah: 100,
+        luas_bangunan: 80,
+        kamar_tidur: 3,
+        kamar_mandi: 2,
+        kondisi: 'baik',
+        jenis_jalan: 'jalan_sedang',
+        sertifikat: 'hgb'
+    };
+    
+    fetch('/api/predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(testData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.prediction) {
+            document.getElementById('testCalculation').textContent = data.formatted;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    });
+}
+
+// Auto load current settings on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const loadCurrentSettings = document.getElementById('loadCurrentSettings');
+    if (loadCurrentSettings) {
+        loadCurrentSettings.click();
+    }
+    
+    // Set dashboard as active section by default
+    const dashboardSection = document.getElementById('dashboard');
+    if (dashboardSection) {
+        dashboardSection.classList.add('active');
+    }
+});
+</script>
