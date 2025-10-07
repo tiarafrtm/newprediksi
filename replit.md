@@ -95,6 +95,12 @@ gunicorn --bind=0.0.0.0:5000 --reuse-port main:app
 - Configured production deployment with Gunicorn
 - Added .gitignore for Python project
 - **Changed prediction to 100% Machine Learning**: Removed base price calculation hybrid model, now uses pure ML predictions
+- **Rebuilt AI Property Search System** (October 7, 2025):
+  - Replaced regex-based NLP with Google Gemini AI for true natural language understanding
+  - Implemented exponential backoff retry logic to handle API 503 errors (overload resilience)
+  - Enhanced search to support budget, location, rooms, facilities, proximity, and keyword-based queries
+  - Added comprehensive null-safety for property data fields
+  - AI now understands complex queries like "rumah dekat sekolah 3 kamar budget 500 juta"
 
 ## Known Issues
 - ML model shows version warnings (trained with scikit-learn 1.5.2, running on 1.7.2)
