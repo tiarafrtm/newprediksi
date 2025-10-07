@@ -10,4 +10,4 @@ app = create_app()
 if __name__ == '__main__':
     # Initialize ML model on startup
     ml_service.load_model()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)

@@ -35,9 +35,7 @@
             // Determine which link should be active based on exact path matching
             let activeLink = null;
             
-            if (currentPath === '/admin/predictions') {
-                activeLink = document.querySelector('a[href*="predictions"]');
-            } else if (currentPath === '/admin/properties') {
+            if (currentPath === '/admin/properties') {
                 activeLink = document.querySelector('a[href*="properties"]');
             } else if (currentPath === '/admin/' || currentPath === '/admin') {
                 activeLink = document.querySelector('a[href*="admin_panel"]');

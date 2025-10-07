@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from werkzeug.utils import secure_filename
-from app.models import PropertyRepository, BasePriceRepository # Assuming BasePriceRepository exists
+from app.models import PropertyRepository
 from app.services.ml_service import ml_service
 import re
 
@@ -208,67 +208,7 @@ def delete_property(property_id):
 
     return redirect(url_for('admin.admin_panel'))
 
-# Add routes for base price management
-@admin_bp.route('/get_base_prices')
-def get_base_prices():
-    """Get current base price settings"""
-    try:
-        base_prices = BasePriceRepository.load_base_prices()
-        return {'success': True, 'data': base_prices}
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
 
-@admin_bp.route('/update_base_prices', methods=['POST'])
-def update_base_prices():
-    """Update base price settings"""
-    try:
-        data = request.get_json()
-
-        # Format the data properly
-        updated_data = {
-            'base_price_per_sqm_land': float(data.get('base_price_per_sqm_land', 500000)),
-            'base_price_per_sqm_building': float(data.get('base_price_per_sqm_building', 2000000)),
-            'room_multiplier': float(data.get('room_multiplier', 50000000)),
-            'bathroom_multiplier': float(data.get('bathroom_multiplier', 25000000)),
-            'floor_multiplier': float(data.get('floor_multiplier', 10000000)),
-            'carport_multiplier': float(data.get('carport_multiplier', 15000000)),
-            'year_bonus_per_year': float(data.get('year_bonus_per_year', 2000000)),
-            'condition_multipliers': {
-                'baru': float(data.get('condition_baru', 1.3)),
-                'baik': float(data.get('condition_baik', 1.0)),
-                'renovasi_ringan': float(data.get('condition_renovasi_ringan', 0.8)),
-                'butuh_renovasi': float(data.get('condition_butuh_renovasi', 0.6))
-            },
-            'road_multipliers': {
-                'jalan_besar': float(data.get('road_jalan_besar', 1.2)),
-                'jalan_sedang': float(data.get('road_jalan_sedang', 1.0)),
-                'gang_kecil': float(data.get('road_gang_kecil', 0.8))
-            },
-            'certificate_multipliers': {
-                'shm': float(data.get('cert_shm', 1.1)),
-                'hgb': float(data.get('cert_hgb', 1.0)),
-                'girik': float(data.get('cert_girik', 0.9))
-            }
-        }
-
-        if BasePriceRepository.save_base_prices(updated_data):
-            # Retrain ML model with new base prices
-            ml_service.train_model()
-            return {'success': True, 'message': 'Base prices updated successfully!'}
-        else:
-            return {'success': False, 'error': 'Failed to update base prices'}
-
-    except Exception as e:
-        return {'success': False, 'error': str(e)}
-
-@admin_bp.route('/predictions')
-def predictions():
-    """Admin predictions page with base price settings"""
-    try:
-        base_prices = BasePriceRepository.load_base_prices()
-    except:
-        base_prices = {}
-    return render_template('admin/predictions.html', base_prices=base_prices)
 
 @admin_bp.route('/settings')
 def settings():

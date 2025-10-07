@@ -94,22 +94,9 @@ class MLPredictionService:
             return False
     
     def predict_price(self, property_data: Dict[str, Any]) -> Optional[float]:
-        """Predict house price using hybrid ML + base price model"""
-        # First try ML prediction
+        """Predict house price using 100% Machine Learning model"""
+        # Use pure ML prediction
         ml_prediction = self._get_ml_prediction(property_data)
-        
-        # Always calculate base price prediction
-        base_prediction = self._get_base_price_prediction(property_data)
-        
-        # If ML model available, use weighted average
-        if ml_prediction is not None and base_prediction is not None:
-            # 70% ML, 30% base price for balanced prediction
-            final_prediction = (0.7 * ml_prediction) + (0.3 * base_prediction)
-            return max(0, final_prediction)
-        elif base_prediction is not None:
-            # Fallback to base price calculation
-            return base_prediction
-        
         return ml_prediction
     
     def _get_ml_prediction(self, property_data: Dict[str, Any]) -> Optional[float]:

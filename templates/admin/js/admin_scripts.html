@@ -278,29 +278,6 @@ if (loadCurrentSettings) {
     });
     });
 }
-
-const basePriceForm = document.getElementById('basePriceForm');
-if (basePriceForm) {
-    basePriceForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        base_price_per_sqm_land: parseFloat(document.getElementById('base_price_per_sqm_land').value.replace(/\./g, '')),
-        base_price_per_sqm_building: parseFloat(document.getElementById('base_price_per_sqm_building').value.replace(/\./g, '')),
-        room_multiplier: parseFloat(document.getElementById('room_multiplier').value.replace(/\./g, '')),
-        bathroom_multiplier: parseFloat(document.getElementById('bathroom_multiplier').value.replace(/\./g, '')),
-        condition_baru: parseFloat(document.getElementById('condition_baru').value),
-        condition_baik: parseFloat(document.getElementById('condition_baik').value),
-        condition_renovasi_ringan: parseFloat(document.getElementById('condition_renovasi_ringan').value),
-        condition_butuh_renovasi: parseFloat(document.getElementById('condition_butuh_renovasi').value)
-    };
-    
-    fetch('/admin/update_base_prices', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
     })
     .then(response => response.json())
     .then(data => {

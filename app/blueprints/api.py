@@ -18,25 +18,38 @@ def search_properties():
         data = request.get_json()
         query = data.get('query', '').strip()
         
+        print(f"Search query received: {query}")  # Debug log
+        
         if not query:
-            return jsonify({
+            response_data = {
                 'properties': PropertyRepository.load_properties()[:6],
                 'explanation': 'Menampilkan beberapa properti terbaru.',
                 'ai_powered': False
-            })
+            }
+        else:
+            # Use the new AI search service
+            response_data = AIPropertySearch.search_properties(query)
         
-        # Use the new AI search service
-        result = AIPropertySearch.search_properties(query)
-        return jsonify(result)
+        # Create response with no-cache headers
+        response = jsonify(response_data)
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        
+        return response
         
     except Exception as e:
+        print(f"Search error: {str(e)}")  # Debug log
         # Fallback to basic properties on error
-        return jsonify({
+        error_response = {
             'properties': PropertyRepository.load_properties()[:5],
             'explanation': 'Terjadi kesalahan dalam pencarian. Menampilkan properti terbaru.',
             'ai_powered': False,
             'error': str(e)
-        })
+        }
+        response = jsonify(error_response)
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
 
 @api_bp.route('/predict', methods=['POST'])
 def predict_price():
